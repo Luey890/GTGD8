@@ -9,9 +9,11 @@ def GetDB():
 
 def GetAllGuesses():
     db = GetDB()
-    Guesses = db.execute("SELECT * FROM Guesses").fetchall()
+    guesses = db.execute("""SELECT Guesses.date, Guesses.game, Guesses.score, Users.username
+                            FROM Guesses JOIN Users ON Guesses.user_id = Users.id
+                            ORDER BY date DESC""").fetchall()
     db.close()
-    return Guesses
+    return guesses
 
 def CheckLogin(username, password):
 
@@ -42,3 +44,17 @@ def RegisterUser(username, password):
     db.commit()
 
     return True
+def AddGuess(user_id, date, game, score):
+   
+    # Check if any boxes were empty
+    if date is None or game is None:
+        return False
+   
+    # Get the DB and add the guess
+    db = GetDB()
+    db.execute("INSERT INTO Guesses(user_id, date, game, score) VALUES (?, ?, ?, ?)",
+               (user_id, date, game, score,))
+    db.commit()
+
+    return True
+

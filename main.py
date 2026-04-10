@@ -56,6 +56,25 @@ def Register():
             return redirect("/")
         
     return render_template("register.html")
+@app.route("/add", methods=["GET","POST"])
+def Add():
+
+    if session.get('username') == None:
+        return redirect("/")
+
+
+    # Did they click submit?
+    if request.method == "POST":
+        user_id = session['id']
+        date = request.form['date']
+        game = request.form['game']
+        score = request.form['score']
+
+        # Send the data to add our new guess to the db
+        db.AddGuess(user_id, date, game, score)
+
+    return render_template("add.html")
 
 
 app.run(debug=True, port=5000)
+
