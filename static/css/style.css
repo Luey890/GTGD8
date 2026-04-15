@@ -22,7 +22,7 @@ main {
 .banner {
     padding: 60px;
     text-align: center;
-    background: #1abc9c;
+    background: #2D4654;
     color: white;
     font-size: 3em;
 }
@@ -48,7 +48,7 @@ nav a:hover {
 }
 
 nav a.active {
-    background-color: #04AA6D;
+    background-color: #2D4654;
     color: white;
 }
 
@@ -75,7 +75,7 @@ nav a.active {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: #1abc9c;
+    background-color: #2D4654;
     color: white;
 }
 
@@ -91,7 +91,7 @@ input[type=text], input[type="password"], input[type="date"], input[type="number
 
 input[type=submit] {
     width: 100%;
-    background-color: #4CAF50;
+    background-color: #2D4654;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -102,11 +102,11 @@ input[type=submit] {
 }
 
 input[type=submit]:hover {
-    background-color: #45a049;
+    background-color: #243B4A;
 }
 
 button {
-    background-color: #4CAF50;
+    background-color: #70A0AF;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;

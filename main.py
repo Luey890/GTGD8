@@ -30,6 +30,8 @@ def Login():
 
             # Send them back to the homepage
             return redirect("/")
+        if session.get('username'):
+            return redirect("/")
 
 
 ##################################
@@ -53,6 +55,8 @@ def Register():
         # Try and add them to the DB
         if db.RegisterUser(username, password):
             # Success! Let's go to the homepage
+            return redirect("/")
+        if session.get('username'):
             return redirect("/")
         
     return render_template("register.html")
