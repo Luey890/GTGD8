@@ -10,6 +10,8 @@ def Home():
     return render_template("index1.html", guesses=guessData) #Note: passing data
 @app.route("/login", methods=["GET", "POST"])
 def Login():
+    if session.get('username'):
+        return redirect("/")
 
 ##################################
 ### New code starts here
@@ -22,13 +24,15 @@ def Login():
         password = request.form['password']
 
         # Did they provide good details
+        if not username or not password:
+            return render_template("login.html", error="Fields cannot be empty")
+
         user = db.CheckLogin(username, password)
         if user:
             # Yes! Save their username and id then
+            session.clear()
             session['id'] = user['id']
             session['username'] = username
-
-            # Send them back to the homepage
             return redirect("/")
         if session.get('username'):
             return redirect("/")
