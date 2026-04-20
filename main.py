@@ -4,6 +4,12 @@ import db
 app = Flask(__name__)
 app.secret_key = "gtg"
 
+app.config.update(
+    SESSION_COOKIE_HTTPONLY=True,  # Prevents JS from reading session cookies (XSS protection)
+    SESSION_COOKIE_SECURE=False,   # Set to True if using HTTPS
+    SESSION_COOKIE_SAMESITE='Lax', # Prevents CSRF
+    PERMANENT_SESSION_LIFETIME=1800 # Session expires after 30 mins of inactivity
+)
 @app.route("/")
 def Home():
     guessData = db.GetAllGuesses() # Note: the new line
