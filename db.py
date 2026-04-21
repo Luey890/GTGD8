@@ -9,7 +9,8 @@ def GetDB():
 
 def GetAllGuesses():
     db = GetDB()
-    guesses = db.execute("""SELECT Guesses.date, Guesses.game, Guesses.score, Users.username
+    guesses = db.execute("""SELECT Guesses.date, Guesses.show
+                         , Guesses.score, Users.username
                             FROM Guesses JOIN Users ON Guesses.user_id = Users.id
                             ORDER BY date DESC""").fetchall()
     db.close()
@@ -44,15 +45,15 @@ def RegisterUser(username, password):
     db.commit()
 
     return True
-def AddGuess(user_id, date, game, score):
+def AddGuess(user_id, date, show, score):
    
     # Check if any boxes were empty
-    if date is None or game is None:
+    if date is None or show is None:
         return False
     # Get the DB and add the guess
     db = GetDB()
-    db.execute("INSERT INTO Guesses(user_id, date, game, score) VALUES (?, ?, ?, ?)",
-               (user_id, date, game, score,))
+    db.execute("INSERT INTO Guesses(user_id, date, show, score) VALUES (?, ?, ?, ?)",
+               (user_id, date, show, score,))
     db.commit()
 
     return True
