@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, send_from_directory, session
 import db
 
 app = Flask(__name__)
@@ -88,7 +88,13 @@ def Add():
         db.AddGuess(user_id, date, game, score)
 
     return render_template("add.html")
-
+@app.route('/serviceworker.js')
+def sw():
+    # This looks inside 'static/js'
+    return send_from_directory('static/js', 'serviceworker.js')
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_from_directory('static/js', 'manifest.json')
 
 app.run(debug=True, port=5000)
 
