@@ -2,15 +2,18 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
 def GetDB():
+
+    # Connect to the database and return the connection object
     db = sqlite3.connect("C:\\Users\\hhmin\\OneDrive\\Documents\\GTGD8\\github\\.database\\gtg.db")
     db.row_factory = sqlite3.Row
 
     return db
 
 def GetAllGuesses():
+
+    # Connect, query all guesses and then return the data
     db = GetDB()
-    guesses = db.execute("""SELECT Guesses.date, Guesses.show
-                         , Guesses.score, Users.username
+    guesses = db.execute("""SELECT Guesses.date, Guesses.game, Guesses.score, Users.username
                             FROM Guesses JOIN Users ON Guesses.user_id = Users.id
                             ORDER BY date DESC""").fetchall()
     db.close()
@@ -27,11 +30,12 @@ def CheckLogin(username, password):
     if user is not None:
         # OK they exist, is their password correct
         if check_password_hash(user['password'], password):
-            # They got it right, return their details 
+            # They got it right, return their details
             return user
-        
+       
     # If we get here, the username or password failed.
     return None
+
 def RegisterUser(username, password):
 
     # Check if they gave us a username and password
@@ -45,16 +49,20 @@ def RegisterUser(username, password):
     db.commit()
 
     return True
-def AddGuess(user_id, date, show, score):
+
+##################################
+### New code starts here
+##################################
+def AddGuess(user_id, date, game, score):
    
     # Check if any boxes were empty
-    if date is None or show is None:
+    if date is None or game is None:
         return False
+   
     # Get the DB and add the guess
     db = GetDB()
-    db.execute("INSERT INTO Guesses(user_id, date, show, score) VALUES (?, ?, ?, ?)",
-               (user_id, date, show, score,))
+    db.execute("INSERT INTO Guesses(user_id, date, game, score) VALUES (?, ?, ?, ?)",
+               (user_id, date, game, score,))
     db.commit()
 
     return True
-

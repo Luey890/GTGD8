@@ -12,14 +12,16 @@
     <h1 class="banner">GuessTheShow.Database</h1>
     <nav>
         <a href="/">Home</a>
-        {% if not session['username'] %}
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-        {% else %}
-            <a href="/logout">Logout</a>
-        {% endif %}
 
-    </nav>
+    {% if session.get('username') %}
+        <!-- Show these ONLY when logged in -->
+        <a href="/logout">Logout</a>
+    {% else %}
+        <!-- Show these ONLY when logged out -->
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    {% endif %}
+</nav>
     <main>
         {% block content %}
         {% endblock %}

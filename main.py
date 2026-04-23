@@ -1,23 +1,15 @@
-from flask import Flask, redirect, render_template, request, send_from_directory, session
+from flask import Flask, render_template, request, session, redirect
 import db
 
 app = Flask(__name__)
 app.secret_key = "gtg"
 
-app.config.update(
-    SESSION_COOKIE_HTTPONLY=True,  # Prevents JS from reading session cookies (XSS protection)
-    SESSION_COOKIE_SECURE=False,   # Set to True if using HTTPS
-    SESSION_COOKIE_SAMESITE='Lax', # Prevents CSRF
-    PERMANENT_SESSION_LIFETIME=1800 # Session expires after 30 mins of inactivity
-)
 @app.route("/")
 def Home():
     guessData = db.GetAllGuesses() # Note: the new line
     return render_template("index1.html", guesses=guessData) #Note: passing data
 @app.route("/login", methods=["GET", "POST"])
 def Login():
-    if session.get('username'):
-        return redirect("/")
 
 ##################################
 ### New code starts here
@@ -30,17 +22,13 @@ def Login():
         password = request.form['password']
 
         # Did they provide good details
-        if not username or not password:
-            return render_template("login.html", error="Fields cannot be empty")
-
         user = db.CheckLogin(username, password)
         if user:
             # Yes! Save their username and id then
-            session.clear()
             session['id'] = user['id']
             session['username'] = username
-            return redirect("/")
-        if session.get('username'):
+
+            # Send them back to the homepage
             return redirect("/")
 
 
@@ -66,9 +54,7 @@ def Register():
         if db.RegisterUser(username, password):
             # Success! Let's go to the homepage
             return redirect("/")
-        if session.get('username'):
-            return redirect("/")
-        
+
     return render_template("register.html")
 @app.route("/add", methods=["GET","POST"])
 def Add():
@@ -88,13 +74,16 @@ def Add():
         db.AddGuess(user_id, date, game, score)
 
     return render_template("add.html")
-@app.route('/serviceworker.js')
-def sw():
+#@app.route('serviceworker.js')
+#def sw():
     # This looks inside 'static/js'
     return send_from_directory('static/js', 'serviceworker.js')
-@app.route('/manifest.json')
-def serve_manifest():
+#@app.route('/manifest.json')
+#def serve_manifest():
     return send_from_directory('static/js', 'manifest.json')
+##################################
+### New code ends here
+##################################
 
 app.run(debug=True, port=5000)
 
