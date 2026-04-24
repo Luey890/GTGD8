@@ -7,24 +7,20 @@ import db
 app = Flask(__name__)
 app.secret_key = "gtg"
 app.config.update(
-    SESSION_COOKIE_SECURE=False,
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE=None, # IE11 handles None better than Lax on localhost
+    SESSION_PERMANENT=False,
+    SESSION_COOKIE_SAMESITE='Lax',
+    SESSION_COOKIE_HTTPONLY=True
 )
 
 @app.after_request
 def add_security_headers(response):
-    # Standard security headers
-    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    
-    # THE IE CACHE KILLERS
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    # This header tells IE: "If the session cookie changes, the page must change"
-    response.headers["Vary"] = "Cookie"
-    
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains' #Convert all http requests to https
+    response.headers['Content-Security-Policy'] = "default-src 'self'" #Tells browser where it can load various types of resource from, in this case only from the server
+    response.headers['X-Content-Type-Options'] = 'nosniff' #Don't let the browser guess the content type, it must be what we say it is
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate" #Don't cache any pages, always get a fresh copy from the server
+    response.headers["Pragma"] = "no-cache" #Older HTTP 1.0 header to prevent caching and included for compatability with older browsers
+    response.headers["Expires"] = "0" #Browser knows the content is expired so must check with the server before using any cached version
+    response.headers["Vary"] = "Cookie" #If the user is logged in, show different content than if they are not
     return response
 @app.route("/")
 def Home():
@@ -49,8 +45,8 @@ def Login():
             # Yes! Save their username and id then
             session['id'] = user['id']
             session['username'] = username
-            session.permanent = True
-            return redirect("/?cache_bust=" + str(int(time.time())))
+            session.permanent = False
+            #return redirect("/?cache_bust=" + str(int(time.time())))
 
             # Send them back to the homepage
             return redirect("/")
@@ -79,7 +75,7 @@ def Register():
             if user:
                 session['id'] = user['id']
                 session['username'] = username
-                session.permanent = True
+                session.permanent = False
             return redirect("/")
     return render_template("register.html")
 @app.route("/add", methods=["GET","POST"])
@@ -111,5 +107,6 @@ def Add():
 ### New code ends here
 ##################################
 
+#Start the server
 app.run(debug=True, port=5000)
 

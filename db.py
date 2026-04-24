@@ -1,4 +1,6 @@
 import sqlite3
+import hashlib
+import os
 from werkzeug.security import generate_password_hash, check_password_hash
 
 def GetDB():
@@ -28,11 +30,17 @@ def CheckLogin(username, password):
 
     # Do they exist?
     if user is not None:
-        # OK they exist, is their password correct
-        if check_password_hash(user['password'], password):
-            # They got it right, return their details
-            return user
+       if user is not None:
+        user_salt = user['salt']
+
+        if user_salt is None:
+            hashed_input = hashlib.sha1(password.encode('utf-8')).hexdigest()
+            return user if user['password'] == hashed_input else None
+        input_salted = (password + user_salt).encode('utf-8')
+        hashed_input = hashlib.sha1(input_salted).hexdigest()
        
+       if user['password'] == hashed_input:
+            return user
     # If we get here, the username or password failed.
     return None
 
@@ -41,14 +49,19 @@ def RegisterUser(username, password):
     # Check if they gave us a username and password
     if username is None or password is None:
         return False
+    salt = os.urandom(16).hex()
+    salted_password = (password + salt).encode('utf-8')
+    sha1_hash = hashlib.sha1(salted_password).hexdigest()
 
     # Attempt to add them to the database
     db = GetDB()
-    hash = generate_password_hash(password)
-    db.execute("INSERT INTO Users(username, password) VALUES(?, ?)", (username, hash,))
-    db.commit()
-
-    return True
+    try:
+        db.execute("INSERT INTO Users(username, password, salt) VALUES(?, ?, ?)", 
+                   (username, sha1_hash, salt))
+        db.commit()
+        return True
+    except sqlite3.Error:
+        return False
 
 ##################################
 ### New code starts here
