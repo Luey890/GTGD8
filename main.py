@@ -1,3 +1,4 @@
+import math
 import time
 
 from flask import Flask, render_template, request, session, redirect
@@ -21,16 +22,23 @@ def add_security_headers(response):
     response.headers["Expires"] = "0" #Browser knows the content is expired so must check with the server before using any cached version
     response.headers["Vary"] = "Cookie" #If the user is logged in, show different content than if they are not
     return response
-@app.route("/")
+
+@app.route("/") #the route for the homepage
 def Home():
-    guessData = db.GetAllGuesses() # Note: the new line
-    return render_template("index1.html", guesses=guessData) #Note: passing data
+    #guessData = db.GetAllGuesses() # Note: the new line
+    page = request.args.get('page', 1, type=int) #Get the page number from the query parameters and default to 1 if not provided
+    per_page = 10 #Limit guesses to 10 per page
+    offset = (page - 1) * per_page #Calculate the offset for the database query based on the current page
+    guessData = db.GetPages(per_page, offset) #Get the guesses for the current page using limit and offset
+    total_guesses = db.TotalGuessCount() #Get the total number of guesses from the guesses database
+    total_pages = math.ceil(total_guesses / per_page)#Calculate the total number of pages and round up to the nearest whole number
+    return render_template("index1.html", guesses=guessData, page=page, total_pages=total_pages) #Note: passing data, page and total_pages
+
+#the route for the login page
 @app.route("/login", methods=["GET", "POST"])
 def Login():
-
-##################################
-### New code starts here
-##################################
+    if session.get('username'): #if the user is logged in, redirect them to the homepage
+        return redirect("/")
 
     # They sent us data, get the username and password
     # then check if their details are correct.
@@ -45,25 +53,26 @@ def Login():
             session['id'] = user['id']
             session['username'] = username
             session.permanent = False
-            #return redirect("/?cache_bust=" + str(int(time.time())))
 
             # Send them back to the homepage
             return redirect("/")
 
-
-##################################
-### New code ends here
-##################################
-
     return render_template("login.html")
 
+#the route for logout
 @app.route("/logout")
 def Logout():
-    session.clear()
-    return redirect("/")
+    session.clear() #Clears all session data
+    return redirect("/") #Redirects the user to the homepage
+
+#the route for the register page
 @app.route("/register", methods=["GET", "POST"])
 def Register():
 
+    #If they are already logged in then send them to the homepage as they don't need to register
+    if session.get('username'): 
+        return redirect("/")
+    #Get the username and password the user sends and add to database
     if request.method == "POST":
         username = request.form['username']
         password = request.form['password']
@@ -75,11 +84,13 @@ def Register():
                 session['id'] = user['id']
                 session['username'] = username
                 session.permanent = False
-            return redirect("/")
+            return redirect("/") #Redirects to homepage after registering
     return render_template("register.html")
+
+#the route for adding a new guess
 @app.route("/add", methods=["GET","POST"])
 def Add():
-
+    #if user is not logged in, send them to the homepage
     if session.get('username') == None:
         return redirect("/")
 

@@ -79,3 +79,22 @@ def AddGuess(user_id, date, game, score):
     db.commit()
 
     return True
+def GetPages(limit, offset):
+
+    #Get the DB and return a page of guesses based on the limit and offset
+    db = GetDB()
+    query = """SELECT Guesses.date, Guesses.show, Guesses.score, Users.username 
+               FROM Guesses 
+               JOIN Users ON Guesses.user_id = Users.id 
+               ORDER BY date DESC 
+               LIMIT ? OFFSET ?"""
+    guesses = db.execute(query, (limit, offset)).fetchall()
+    db.close()
+    return guesses
+
+def TotalGuessCount():
+    #Get the DB and return the total number of guesses in the database
+    db = GetDB()
+    result = db.execute("SELECT COUNT(*) as total FROM Guesses").fetchone()
+    db.close()
+    return result['total']
