@@ -1,3 +1,9 @@
+window.addEventListener('unload', function (event) {
+        if (document.visibilityState === 'hidden') {
+
+    navigator.sendBeacon('/logout');
+        }});
+
 if ("serviceWorker" in navigator) { 
     window.addEventListener("load", function () {
         navigator.serviceWorker
@@ -6,3 +12,4 @@ if ("serviceWorker" in navigator) {
         .catch((err) => console.log("Service worker not registered", err));
     });
 }
+

@@ -4,7 +4,7 @@
 
 <div class="container">
 
-    <p>Welcome to GuessThe.Game Database (aka. GTGDB). This website is dedicated to the hard working Year 12 SE students of 2024-2025. The last 5 minutes of class are always a flurry of excitement and hard work. They open <a href="https://guessthe.game/">GuessThe.Game</a> and scream their suggestions at the host. Let's start tracking their progress.</p>
+    <p>Welcome to GuessTheShow! This is a simple web application for tracking guesses in GuessTheShow, an entertaining quiz game for show enthusiasts.</p>
 
     {% if session['username'] %}
         <br>
@@ -28,7 +28,7 @@
     <thead>
         <th>Date</th>
         <th>User who guessed</th>
-        <th>Game</th>
+        <th>Show</th>
         <th>Score</th>
     </thead>
 
@@ -37,7 +37,7 @@
         <tr>
             <td>{{ guess['date'] }}</td>
             <td>{{ guess['username'] }}</td>
-            <td>{{ guess['game'] }}</td>
+            <td>{{ guess['show'] }}</td>
             <td>{{ guess['score'] }}</td>
         </tr>
         {% endfor %}

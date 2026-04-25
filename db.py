@@ -15,7 +15,7 @@ def GetAllGuesses():
 
     # Connect, query all guesses and then return the data
     db = GetDB()
-    guesses = db.execute("""SELECT Guesses.date, Guesses.game, Guesses.score, Users.username
+    guesses = db.execute("""SELECT Guesses.date, Guesses.show, Guesses.score, Users.username
                             FROM Guesses JOIN Users ON Guesses.user_id = Users.id
                             ORDER BY date DESC""").fetchall()
     db.close()
@@ -74,7 +74,7 @@ def AddGuess(user_id, date, game, score):
    
     # Get the DB and add the guess
     db = GetDB()
-    db.execute("INSERT INTO Guesses(user_id, date, game, score) VALUES (?, ?, ?, ?)",
+    db.execute("INSERT INTO Guesses(user_id, date, show, score) VALUES (?, ?, ?, ?)",
                (user_id, date, game, score,))
     db.commit()
 

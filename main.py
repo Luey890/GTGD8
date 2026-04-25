@@ -1,5 +1,4 @@
 import time
-from urllib import response
 
 from flask import Flask, render_template, request, session, redirect
 import db
@@ -89,11 +88,11 @@ def Add():
     if request.method == "POST":
         user_id = session['id']
         date = request.form['date']
-        game = request.form['game']
+        show = request.form['show']
         score = request.form['score']
 
         # Send the data to add our new guess to the db
-        db.AddGuess(user_id, date, game, score)
+        db.AddGuess(user_id, date, show, score)
         return redirect("/")
 
     return render_template("add.html")
