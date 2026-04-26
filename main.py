@@ -2,7 +2,7 @@
 import math 
 from datetime import timedelta
 
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, session, redirect, send_from_directory
 import db
 
 app = Flask(__name__)
@@ -116,15 +116,7 @@ def Add():
         return redirect("/")
 
     return render_template("add.html")
-#@app.route('serviceworker.js')
-#def sw():
-    return send_from_directory('static/js', 'serviceworker.js')
-#@app.route('/manifest.json')
-#def serve_manifest():
-    return send_from_directory('static/js', 'manifest.json')
-##################################
-### New code ends here
-##################################
+
 
 #Start the server
 app.run(debug=True, port=5000)
