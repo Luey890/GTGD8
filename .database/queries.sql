@@ -2,6 +2,7 @@
 CREATE TABLE Users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password NOT NULL);
 ALTER TABLE Users ADD COLUMN salt TEXT;
 DELETE FROM Guesses WHERE id = 14;
+DELETE FROM Users WHERE id <= 7;
 UPDATE Guesses set score = 5 WHERE id = 9;
 SELECT * FROM Guesses where user_id > 5;
 SELECT * FROM Guesses where score > 3;

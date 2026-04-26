@@ -9,7 +9,8 @@ app.secret_key = "gtg"
 app.config.update(
     SESSION_PERMANENT=False,
     SESSION_COOKIE_SAMESITE='Lax',
-    SESSION_COOKIE_HTTPONLY=True
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SECURE=True,  # Only send cookie over HTTPS
 )
 
 @app.after_request
@@ -50,6 +51,7 @@ def Login():
         user = db.CheckLogin(username, password)
         if user:
             # Yes! Save their username and id then
+            session.clear()
             session['id'] = user['id']
             session['username'] = username
             session.permanent = False

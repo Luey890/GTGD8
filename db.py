@@ -1,14 +1,13 @@
 import sqlite3
 import hashlib
 import os
-from werkzeug.security import generate_password_hash, check_password_hash
 
 def GetDB():
 
     # Connect to the database and return the connection object
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(BASE_DIR, ".database", "gtg.db")
-    db = sqlite3.connect(db_path)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__)) #Turns the part of the current file into an absolute path and then gets the directory of that path. Used to find the database file regardless of where the program is run from.
+    db_path = os.path.join(BASE_DIR, ".database", "gtg.db") #Creates path to the database file 
+    db = sqlite3.connect(db_path) 
     db.row_factory = sqlite3.Row
 
     return db
