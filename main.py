@@ -1,4 +1,5 @@
-import math
+#import libraries
+import math 
 import time
 
 from flask import Flask, render_template, request, session, redirect
