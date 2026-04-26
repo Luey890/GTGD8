@@ -117,3 +117,7 @@ button {
     cursor: pointer;
     font-size: 1.05em;
 }
+
+button:hover {
+    background-color:#243B4A;
+}

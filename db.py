@@ -6,7 +6,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def GetDB():
 
     # Connect to the database and return the connection object
-    db = sqlite3.connect("C:\\Users\\hhmin\\OneDrive\\Documents\\GTGD8\\github\\.database\\gtg.db")
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, ".database", "gtg.db")
+    db = sqlite3.connect(db_path)
     db.row_factory = sqlite3.Row
 
     return db
