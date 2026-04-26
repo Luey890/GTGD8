@@ -32,8 +32,7 @@ def CheckLogin(username, password):
 
     # Do they exist?
     if user is not None:
-       if user is not None:
-        user_salt = user['salt']
+        user_salt = user['salt'] # Get the salt for this user.
 
         if user_salt is None:
             hashed_input = hashlib.sha1(password.encode('utf-8')).hexdigest()
@@ -41,7 +40,7 @@ def CheckLogin(username, password):
         input_salted = (password + user_salt).encode('utf-8')
         hashed_input = hashlib.sha1(input_salted).hexdigest()
        
-       if user['password'] == hashed_input:
+        if user['password'] == hashed_input:
             return user
     # If we get here, the username or password failed.
     return None
