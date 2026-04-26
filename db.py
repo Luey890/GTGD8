@@ -36,7 +36,7 @@ def CheckLogin(username, password):
 
         if user_salt is None:
             hashed_input = hashlib.sha1(password.encode('utf-8')).hexdigest()
-            return user if user['password'] == hashed_input else None
+            return user if user['password'] == hashed_input else None  
         input_salted = (password + user_salt).encode('utf-8')
         hashed_input = hashlib.sha1(input_salted).hexdigest()
        

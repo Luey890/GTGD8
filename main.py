@@ -1,19 +1,22 @@
 #import libraries
 import math 
-import time
+from datetime import timedelta
 
 from flask import Flask, render_template, request, session, redirect
 import db
 
 app = Flask(__name__)
 app.secret_key = "gtg"
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5) #Set the session to expire after 5 minutes of inactivity
 app.config.update(
-    SESSION_PERMANENT=False,
     SESSION_COOKIE_SAMESITE='Lax',
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=True,  # Only send cookie over HTTPS
 )
-
+@app.before_request
+def session_timeout():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=5) #Reset the session timoeout on each request
 @app.after_request
 def add_security_headers(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains' #Convert all http requests to https
@@ -60,7 +63,6 @@ def Login():
             session.clear()
             session['id'] = user['id']
             session['username'] = username
-            session.permanent = False
 
             # Send them back to the homepage
             return redirect("/")
@@ -91,7 +93,6 @@ def Register():
             if user:
                 session['id'] = user['id']
                 session['username'] = username
-                session.permanent = False
             return redirect("/") #Redirects to homepage after registering
     return render_template("register.html")
 
