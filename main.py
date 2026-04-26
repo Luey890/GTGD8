@@ -29,11 +29,16 @@ def add_security_headers(response):
 def Home():
     #guessData = db.GetAllGuesses() # Note: the new line
     page = request.args.get('page', 1, type=int) #Get the page number from the query parameters and default to 1 if not provided
-    per_page = 10 #Limit guesses to 10 per page
-    offset = (page - 1) * per_page #Calculate the offset for the database query based on the current page
-    guessData = db.GetPages(per_page, offset) #Get the guesses for the current page using limit and offset
+    per_page = 10 #Limit guesses to 10 per page e 
     total_guesses = db.TotalGuessCount() #Get the total number of guesses from the guesses database
     total_pages = math.ceil(total_guesses / per_page)#Calculate the total number of pages and round up to the nearest whole number
+    if page < 1: #If the page number is less than 1, set it to 1 to prevent invalid page numbers and users from trying to access non-existent pages
+       page = 1
+    elif page > total_pages and total_pages > 0:
+       page = total_pages
+    
+    offset = (page - 1) * per_page #Calculate the offset for the database query based on the current page
+    guessData = db.GetPages(per_page, offset)#Get the guesses for the current page using limit and offset
     return render_template("index1.html", guesses=guessData, page=page, total_pages=total_pages) #Note: passing data, page and total_pages
 
 #the route for the login page
